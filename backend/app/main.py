@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app import models  # noqa: F401
 from app.database import Base, engine, get_db
+from app.routers import events
 
 
 @asynccontextmanager
@@ -15,6 +16,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="PlaySentry", version="0.1.0", lifespan=lifespan)
+app.include_router(events.router)
 
 
 @app.get("/health")
