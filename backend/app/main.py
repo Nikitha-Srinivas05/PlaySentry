@@ -1,10 +1,20 @@
+from contextlib import asynccontextmanager
+
 from fastapi import Depends, FastAPI
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app import models  # noqa: F401
+from app.database import Base, engine, get_db
 
-app = FastAPI(title="PlaySentry", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="PlaySentry", version="0.1.0", lifespan=lifespan)
 
 
 @app.get("/health")
